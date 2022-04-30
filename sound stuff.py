@@ -1,11 +1,11 @@
 # generic imports
+from calendar import c
 import pyaudio
 import struct
 import numpy as np
 from matplotlib import pyplot as plt
 from tkinter import TclError
 from scipy.fft import fft
-from scipy.fft import fftfreq
 
 
 # constants
@@ -40,13 +40,40 @@ fig.show()
 while True:
     # reading from the stream
     data = stream.read(CHUNK)
-    #data_int = np.array(struct.unpack(str(2*CHUNK) + 'B', data), dtype='b')[::2]+127
+    #data_int = np.array(struct.unpack(str(2*CHUNK) + 'B', data), dtype='b')[::2]+127 (string unpacking and wrapping in an array)
     data_int = struct.unpack(str(CHUNK) + 'h', data)
     data_fft = np.abs(fft(data_int))*2/(33000*CHUNK)
     data_fft_nonv = data_fft.reshape(len(data_fft), 1)
     max = np.amax(data_fft_nonv)
     ind = np.where(data_fft==max)
-    print(freq_range[ind][0])
+    val = freq_range[ind][0]
+    #if statements galore
+    if val>=1046 and val<1108:
+        print('c')
+    elif val>=1108 and val<1174:
+        print('c#')
+    elif val>=1174 and val<1244:
+        print('d')
+    elif val>=1244 and val<1318:
+        print('d#')
+    elif val>=1318 and val<1397:
+        print('e')
+    elif val>=1397 and val<1480:
+        print('f')
+    elif val>=1480 and val<1568:
+        print('f#')
+    elif val>=1568 and val<1661:
+        print('g')
+    elif val>=1661 and val<1760:
+        print('g#')
+    elif val>=1760 and val<1865:
+        print('a')
+    elif val>=1865 and val<=1975:
+        print('a#')
+    elif val>=1975 and val<=2093:
+        print('b')
+    else:
+        print(' ')
     line.set_ydata(data_fft)
     fig.canvas.draw()
     fig.canvas.flush_events()
